@@ -1,14 +1,10 @@
 """
-This sample demonstrates a simple skill built with the Amazon Alexa Skills Kit.
-The Intent Schema, Custom Slots, and Sample Utterances for this skill, as well
-as testing instructions are located at http://amzn.to/1LzFrj6
+Antlexa using Amazon Alexa Skills Kit
 
-For additional samples, visit the Alexa Skills Kit Getting Started guide at
-http://amzn.to/1LGWsLG
 """
 
 from __future__ import print_function
-
+from antlexa import *
 
 # --------------- Helpers that build all of the responses ----------------------
 
@@ -44,8 +40,9 @@ def build_response(session_attributes, speechlet_response):
 # --------------- Functions that control the skill's behavior ------------------
 
 def get_welcome_response():
-    """ If we wanted to initialize the session to have some attributes we could
-    add those here
+    """ 
+    Initialize the session to have some attributes and welcome the user
+    Only invoked when no stop id is given
     """
 
     session_attributes = {}
@@ -60,48 +57,25 @@ def get_welcome_response():
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
-
+# test session end, usual request will end without calling this
 def handle_session_end_request():
     card_title = "Session Ended"
-    speech_output = "Thank you for trying the Alexa Skills Kit sample. " \
-                    "Have a nice day! "
+    speech_output = "Don't be late to your bus!" 
     # Setting this to true ends the session and exits the skill.
     should_end_session = True
     return build_response({}, build_speechlet_response(
         card_title, speech_output, None, should_end_session))
 
-# ------------------WHAT WERE DOING-------
-def set_color_in_session(intent, session):
-    card_title = intent['name']
-    session_attributes = {}
-    should_end_session = False
+# create stop id attributes 
+def create_stop_id_attribute(stop_id):
+    return {"stopID": stop_id}
 
-    if 'stops' in intent['slots']:
-        if intent['slots']['stops']['resolutions']['']
-        favorite_color = intent['slots']['Color']['value']
-        session_attributes = create_favorite_color_attributes(favorite_color)
-        speech_output = "I now know your favorite color is " + \
-                        favorite_color + \
-                        ". You can ask me your favorite color by saying, " \
-                        "what's my favorite color?"
-        reprompt_text = "You can ask me your favorite color by saying, " \
-                        "what's my favorite color?"
-    else:
-        speech_output = "I'm not sure what your favorite color is. " \
-                        "Please try again."
-        reprompt_text = "I'm not sure what your favorite color is. " \
-                        "You can tell me your favorite color by saying, " \
-                        "my favorite color is red."
-    return build_response(session_attributes, build_speechlet_response(
-        card_title, speech_output, reprompt_text, should_end_session))
+# get bus times function, calls function in antlexa.py file  
 
-def create_favorite_color_attributes(favorite_color):
-    return {"favoriteColor": favorite_color}
-
-
-def set_color_in_session(intent, session):
-    """ Sets the color in the session and prepares the speech to reply to the
-    user.
+def get_bus_times_in_session(intent, session):
+    """ 
+    Calls another python script which calls the API to get the bus times 
+    to save into the session and then return to the user.  
     """
 
     card_title = intent['name']
@@ -112,50 +86,29 @@ def set_color_in_session(intent, session):
 
         numTimes = len(intent['slots']['stops']
             ['resolutions']['resolutionsPerAuthority'][0]['values'])
-
+	
+	# returned more than one stop id, must exit and ask user for more
         if numTimes > 1:
-
-        else:
-
-        stopID = intent['slots']['stops']['resolutions']
-            ['resolutionsPerAuthority'][0]['values'][0]['value']['name']
-
-        session_attributes = create_favorite_color_attributes(favorite_color)
-        speech_output = "I now know your favorite color is " + \
-                        favorite_color + \
-                        ". You can ask me your favorite color by saying, " \
-                        "what's my favorite color?"
-        reprompt_text = "You can ask me your favorite color by saying, " \
-                        "what's my favorite color?"
+	    speech_output = "I got more than one stop I.D. please try again."
+	    reprompt_text = "I'm getting more than one stop I.D. " \
+                            "Please try again or check the documentation for available bus stops."
+			    
+        # exactly one stop id, call python function to get string of bus times
+	else:
+	    stopID = intent['slots']['stops']['resolutions']
+            	['resolutionsPerAuthority'][0]['values'][0]['value']['name']
+	    should_end_session = True	
+        session_attributes = create_stop_id_attribute(stopID)
+	    speech_output = getTimes(stopID) 
+    # error in recognizing bus stop id or wrong input
     else:
-        speech_output = "I'm not sure what your favorite color is. " \
+        speech_output = "I'm not sure what bus stop that is. " \
                         "Please try again."
-        reprompt_text = "I'm not sure what your favorite color is. " \
-                        "You can tell me your favorite color by saying, " \
-                        "my favorite color is red."
+        reprompt_text = "I'm not sure what bus stop you are trying to say. " \
+                        "You can look at the available bus stops in " \
+                        "the documentation."
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
-
-
-def get_color_from_session(intent, session):
-    session_attributes = {}
-    reprompt_text = None
-
-    if session.get('attributes', {}) and "favoriteColor" in session.get('attributes', {}):
-        favorite_color = session['attributes']['favoriteColor']
-        speech_output = "Your favorite color is " + favorite_color + \
-                        ". Goodbye."
-        should_end_session = True
-    else:
-        speech_output = "I'm not sure what your favorite color is. " \
-                        "You can say, my favorite color is red."
-        should_end_session = False
-
-    # Setting reprompt_text to None signifies that we do not want to reprompt
-    # the user. If the user does not respond or says something that is not
-    # understood, the session will end.
-    return build_response(session_attributes, build_speechlet_response(
-        intent['name'], speech_output, reprompt_text, should_end_session))
 
 
 # --------------- Events ------------------
@@ -189,9 +142,7 @@ def on_intent(intent_request, session):
 
     # Dispatch to your skill's intent handlers
     if intent_name == "GetBusTimesAtStop":
-        return set_color_in_session(intent, session)
-    #elif intent_name == "WhatsMyColorIntent":
-     #   return get_color_from_session(intent, session)
+        return get_bus_times_in_session(intent, session)
     elif intent_name == "AMAZON.HelpIntent":
         return get_welcome_response()
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
@@ -207,22 +158,22 @@ def on_session_ended(session_ended_request, session):
     """
     print("on_session_ended requestId=" + session_ended_request['requestId'] +
           ", sessionId=" + session['sessionId'])
-    # add cleanup logic here
 
 
 # --------------- Main handler ------------------
 
 def lambda_handler(event, context):
-    """ Route the incoming request based on type (LaunchRequest, IntentRequest,
+    """ 
+    Route the incoming request based on type (LaunchRequest, IntentRequest,
     etc.) The JSON body of the request is provided in the event parameter.
     """
     print("event.session.application.applicationId=" +
           event['session']['application']['applicationId'])
 
-    """
+    """ TESTING PHASE
     Uncomment this if statement and populate with your skill's application ID to
     prevent someone else from configuring a skill that sends requests to this
-    function.
+    function. 
     """
     # if (event['session']['application']['applicationId'] !=
     #         "amzn1.echo-sdk-ams.app.[unique-value-here]"):
@@ -232,6 +183,7 @@ def lambda_handler(event, context):
         on_session_started({'requestId': event['request']['requestId']},
                            event['session'])
 
+        
     if event['request']['type'] == "LaunchRequest":
         return on_launch(event['request'], event['session'])
     elif event['request']['type'] == "IntentRequest":
