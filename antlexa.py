@@ -27,21 +27,21 @@ list_of_hashes = sheet.get_all_values()
 """
 
 stopDicts = {
-  '8197566':'UTC North',
-  '8197552':'UTC South',
-  '8197554':'Campus Cornell',
-  '8197568':'California Cornell',
-  '8197570':'AV Stop #1',
-  '8197572':'CDS Stop #1',
-  '8197574':'CDS Stop #2',
-  '8197576':'CDS Stop #3',
-  '8197560':'VDC Stop #1',
-  '8197558':'VDC Stop #2',
-  '8197580':'VDC Norte Stop #1',
-  '8197582':'VDC Norte Stop #2',
-  '8197584':'VDC Norte Stop #3',
-  '8197564':'East Campus Transfer',
-  '8197578':'Puerta del sol North'  		
+  'UTC North':'8197566',
+  'UTC South':'8197552',
+  'Campus Cornell':'819755Z4',
+  'California Cornell':'8197568',
+  'AV Stop #1':'8197570',
+  'CDS Stop #1':'8197572',
+  'CDS Stop #2':'8197574',
+  'CDS Stop #3':'8197576',
+  'VDC Stop #1':'8197560',
+  'VDC Stop #2':'8197558',
+  'VDC Norte Stop #1':'8197580',
+  'VDC Norte Stop #2':'8197582',
+  'VDC Norte Stop #3':'8197584',
+  'East Campus Transfer':'8197564',
+  'Puerta del sol North':'8197578'		
 }
 
 
@@ -63,11 +63,11 @@ def parseTime(time):
   string = timeLeft[1] + " minutes and " + timeLeft[2] + " seconds"
   print string
 
-def getTimes(stop_id):  
+def getTimes(stopID):  
     for route in response.body['data']:
-    if route[stop_id] == '8197580':
-      for stops in route['arrivals']:
-         parseTime(stops['arrival_at'])    
+        if route[stop_id] == stopDicts[stopID]:
+            for stops in route['arrivals']:
+                parseTime(stops['arrival_at'])    
 
 """
 response = unirest.get("https://transloc-api-1-2.p.mashape.com/routes.json?agencies=1039&callback=call",
@@ -84,8 +84,11 @@ response = unirest.get("https://transloc-api-1-2.p.mashape.com/routes.json?agenc
 
 
 # 8197566 Puerta del sol north?
+test = "hello"
+def retTest():
+   return stopDicts
 
-if "__name__" = main:
+#if "__name__" = main:
 	#ask user for input for stop id
 
 
