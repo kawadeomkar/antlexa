@@ -8,7 +8,7 @@ import unirest
 import json
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-
+from creds import *
 """
 GOOGLE SPREADSHEETS API
 CONNECT TO ANTLEXA DATABASE
@@ -47,7 +47,7 @@ stopDicts = {
 
 response = unirest.get("https://transloc-api-1-2.p.mashape.com/arrival-estimates.json?agencies=1039&callback=call",
   headers={
-    "X-Mashape-Key": "l9Kp0js8cGmshilLQYcPz6gyx8o7p1SN9FTjsnWgrCsUaZex9O",
+    "X-Mashape-Key": xmashupkey,  
     "Accept": "application/json"
   }
 )
@@ -72,7 +72,7 @@ def getTimes(stop_id):
 """
 response = unirest.get("https://transloc-api-1-2.p.mashape.com/routes.json?agencies=1039&callback=call",
   headers={
-    "X-Mashape-Key": "l9Kp0js8cGmshilLQYcPz6gyx8o7p1SN9FTjsnWgrCsUaZex9O",
+    "X-Mashape-Key": xmashupkey,
     "Accept": "application/json"
   }
 )
