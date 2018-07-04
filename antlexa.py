@@ -2,9 +2,14 @@
 ANTLEXA
 Get arrival estimates for the Anteater Express using Transloc API
 """
+import pip
+import subprocess
+
+subprocess.call(['pip', 'install', 'unirest'])
+subprocess.call(['pip', 'install', 'datetime'])
+
 from datetime import datetime
 import unirest
-import json
 from creds import *
 
 
