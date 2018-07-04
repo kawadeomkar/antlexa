@@ -2,12 +2,9 @@
 ANTLEXA
 Get arrival estimates for the Anteater Express using Transloc API
 """
-import inspect
 from datetime import datetime
 import unirest
 import json
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
 from creds import *
 
 
@@ -39,7 +36,6 @@ response = unirest.get("https://transloc-api-1-2.p.mashape.com/arrival-estimates
   }
 )
 
-
 def parseTime(time): 
   #print time
   times = time.split("T")
@@ -55,7 +51,6 @@ def parseTime(time):
     string = timeLeft[1] + " minutes"
   else:
     string = timeLeft[1] + " minutes and " + timeLeft[2] + " seconds"
-  
   return string
 
 def getTimes(stop_name):  
