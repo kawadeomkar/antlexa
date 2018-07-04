@@ -29,6 +29,8 @@ stopDicts = {
   'Puerta del sol North':'8197578'		
 }
 
+# only contains 2 bus times
+retStr = []
 
 response = unirest.get("https://transloc-api-1-2.p.mashape.com/arrival-estimates.json?agencies=1039&callback=call",
   headers={
@@ -36,6 +38,7 @@ response = unirest.get("https://transloc-api-1-2.p.mashape.com/arrival-estimates
     "Accept": "application/json"
   }
 )
+
 
 def parseTime(time): 
   #print time
@@ -45,14 +48,23 @@ def parseTime(time):
   FMT = '%H:%M:%S'
   tdelta = datetime.strptime(retTime, FMT) - datetime.strptime(currentTime, FMT)
   timeLeft = str(tdelta).split(":")
-  string = timeLeft[1] + " minutes and " + timeLeft[2] + " seconds"
-  print string
 
-def getTimes(stopID):  
-    for route in response.body['data']:
-        if route[stop_id] == stopDicts[stopID]:
-            for stops in route['arrivals']:
-                parseTime(stops['arrival_at'])    
+  if timeLeft[1] == "00":
+    string = " " + timeLeft[2] + " seconds "
+  elif timeLeft[2] == "00":
+    string = timeLeft[1] + " minutes"
+  else:
+    string = timeLeft[1] + " minutes and " + timeLeft[2] + " seconds"
+  
+  return string
+
+def getTimes(stop_name):  
+  for route in response.body['data']:
+    if route['stop_id'] == stopDicts[stop_name]:
+      for stops in route['arrivals']:
+        timeStr = parseTime(stops['arrival_at'])
+        retStr.append(timeStr)
+  return ", ".join(retStr)    
 
 """
 response = unirest.get("https://transloc-api-1-2.p.mashape.com/routes.json?agencies=1039&callback=call",
@@ -67,11 +79,8 @@ response = unirest.get("https://transloc-api-1-2.p.mashape.com/routes.json?agenc
 # N LINE STOPS: [u'8197566', u'8197580', u'8197582', u'8197584', u'8197564', u'8197578']
 # H LINE STOPS: [u'8197566', u'8197554', u'8197568', u'8197570', u'8197572', u'8197574', u'8197576', u'8197560', u'8197558', u'8197580', u'8197582', u'8197584', u'8197564', u'8197578']
 
-
 # 8197566 Puerta del sol north?
-test = "hello"
-def retTest():
-   return stopDicts
+#getTimes(8197566)
 
 #if "__name__" = main:
 	#ask user for input for stop id
