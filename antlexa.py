@@ -2,16 +2,10 @@
 ANTLEXA
 Get arrival estimates for the Anteater Express using Transloc API
 """
-import pip
-import subprocess
-
-subprocess.call(['pip', 'install', 'unirest'])
-subprocess.call(['pip', 'install', 'datetime'])
-
 from datetime import datetime
 import unirest
 from creds import *
-
+import requests
 
 stopDicts = {
   'UTC North':'8197566',
@@ -41,6 +35,12 @@ response = unirest.get("https://transloc-api-1-2.p.mashape.com/arrival-estimates
   }
 )
 
+response2 = requests.get("https://transloc-api-1-2.p.mashape.com/arrival-estimates.json?agencies=1039&callback=call",  
+  headers = {
+    "X-Mashape-Key": xmashupkey,
+    "Accept": "application/json"
+  }
+) 
 def parseTime(time): 
   #print time
   times = time.split("T")
