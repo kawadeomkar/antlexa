@@ -1,4 +1,4 @@
 # antlexa
 (under construction)
-Get arrival estimates for the Anteater Express using Transloc API
+Alexa skill that retrieves arrival estimates of busses for the Anteater Express using Transloc API
 
