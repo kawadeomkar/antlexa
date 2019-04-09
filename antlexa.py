@@ -33,6 +33,18 @@ class TranslocAPI:
 			'East Campus Transfer':'8197564',
 			'Puerta del sol North':'8197578'		
 		}
+
+		self.busIDs = {
+			'V':'8004734',
+			'C':'8004736',
+			'H':'8004740',
+			'D':'8004742',
+			'M':'8005766',
+			'N':'8004748',
+			'S':'8004750',
+			'W':'8004752',
+			'M Weekend':'8004746'
+		}
 		# only contains 2 bus times
 		self.retStr = []
 		self.response = self.getResponse()
