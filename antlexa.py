@@ -35,15 +35,15 @@ class TranslocAPI:
 		}
 
 		self.busIDs = {
-			'V':'8004734',
-			'C':'8004736',
-			'H':'8004740',
-			'D':'8004742',
-			'M':'8005766',
-			'N':'8004748',
-			'S':'8004750',
-			'W':'8004752',
-			'M Weekend':'8004746'
+			'8004734':'V',
+			'8004736':'C',
+			'8004740':'H',
+			'8004742':'D',
+			'8005766':'M',
+			'8004748':'N',
+			'8004750':'S',
+			'8004752':'W',
+			'8004746':'M Weekend'
 		}
 		# only contains 2 bus times
 		self.retStr = []
@@ -59,7 +59,7 @@ class TranslocAPI:
 		)
 		return json.loads(response.text)
 
-
+	# parse time format into string
 	def parseTime(self, time): 
 		#print time
 		times = time.split("T")
@@ -77,13 +77,21 @@ class TranslocAPI:
 			string = timeLeft[1] + " minutes and " + timeLeft[2] + " seconds"
 		return string
 
+	#
+	def format(self, retStr):
+		busString = ""
+		for busTime in retStr:
+			busString += retStr[0] + " Line coming in " + retStr[1] + ", ";
+		return busString
+
+	# get arrival estimates  given stop name
 	def getTimes(self, stop_name):  
 		for route in self.response['data']:
 			if route['stop_id'] == self.stopDicts[stop_name]:
 				for stops in route['arrivals']:
 					timeStr = self.parseTime(stops['arrival_at'])
-					self.retStr.append(timeStr)
-		return ", ".join(self.retStr)    
+					self.retStr.append(timeStr, self.busIDs[stops['vehicle_id']])
+		return format(self.retStr)
 
 # V LINE STOPS: [u'8197552', u'8197554', u'8197558', u'8197560', u'8197564']
 # C LINE STOPS: [u'8197566', u'8197568', u'8197570', u'8197572', u'8197574', u'8197576', u'8197578']
