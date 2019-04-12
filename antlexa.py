@@ -70,7 +70,7 @@ class TranslocAPI:
 		timeLeft = str(tdelta).split(":")
 
 		if timeLeft[1] == "00":
-			string = " " + timeLeft[2] + " seconds "
+			string =  timeLeft[2] + " seconds"
 		elif timeLeft[2] == "00":
 			string = timeLeft[1] + " minutes"
 		else:
@@ -90,7 +90,7 @@ class TranslocAPI:
 			if route['stop_id'] == self.stopDicts[stop_name]:
 				for stops in route['arrivals']:
 					timeStr = self.parseTime(stops['arrival_at'])
-					self.retStr.append(timeStr, self.busIDs[stops['vehicle_id']])
+					self.retStr.append((timeStr, self.busIDs[stops['route_id']]))
 		return format(self.retStr)
 
 # V LINE STOPS: [u'8197552', u'8197554', u'8197558', u'8197560', u'8197564']

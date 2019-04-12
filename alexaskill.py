@@ -7,7 +7,7 @@ Antlexa using Amazon Alexa Skills Kit
 """
 
 from __future__ import print_function
-from antlexa import *
+import antlexa
 
 
 # --------------- Helpers that build all of the responses ----------------------
@@ -50,7 +50,7 @@ def get_welcome_response():
     # that is not understood, they will be prompted again with this text.
 
     reprompt_text = \
-        "Please tell me the bus stop where you'd want to hearthe bus times at, if you would like to see the list please say see list"
+        "Please tell which bus stop where you want to hear the bus times at, if you would like to see the list please say see list"
     should_end_session = False
     return build_response(session_attributes,
                           build_speechlet_response(card_title,
